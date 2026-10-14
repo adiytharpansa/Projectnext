@@ -99,3 +99,30 @@ flutter test
 flutter build apk --release
 flutter build ipa            # butuh macOS + sertifikat
 ```
+
+## CI, build web & preview tanpa SDK lokal
+
+Workflow `.github/workflows/mobile.yml` berjalan tiap push ke `mobile/**`:
+`flutter analyze` → `flutter test` → `flutter build web` (job *web*) dan `flutter build apk --release` (job *android*).
+
+- Hasil tersedia sebagai **artifact** (`anilab-web`, `anilab-android-apk`, 7 hari) di tab Actions.
+- Build + log juga dipublikasikan ke **ref tersembunyi** (bukan branch/tag) agar bisa diambil lewat git:
+
+  ```bash
+  git fetch origin '+refs/preview/*:refs/remotes/preview/*'
+  git show preview/anilab-web:STATUS                 # commit, hasil analyze/test/build
+  git show preview/anilab-web:logs/analyze.txt
+  git archive preview/anilab-web web | tar -x        # → ./web (hasil flutter build web)
+  git show preview/anilab-apk:anilab-release.apk > anilab.apk
+  ```
+
+- Preview web dengan **data contoh** (tanpa backend/scraper):
+
+  ```bash
+  node scripts/mock-api.mjs --port 8080 --static ./web   # buka http://localhost:8080
+  ```
+
+  Server mock meniru kontrak `/api/v1/*` (katalog contoh, video MP4 contoh, subtitle VTT).
+  Target web memakai origin halaman sebagai alamat API; override dengan
+  `flutter build web --dart-define=API_BASE_URL=https://api.contoh.com`.
+

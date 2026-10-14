@@ -116,6 +116,9 @@ Klien **Flutter** (Android/iOS) bergaya dark + aksen merah: onboarding, beranda 
 cd mobile && ./setup.sh && flutter run   # backend: http://10.0.2.2:3000 (emulator Android)
 ```
 
+CI Flutter: `.github/workflows/mobile.yml` (analyze, test, build web + APK; artifact & ref `refs/preview/*`).
+Preview web dengan data contoh: `node scripts/mock-api.mjs --port 8080 --static <hasil flutter build web>`.
+
 ## Frontend my-anime (`web/`)
 
 Klien Next.js (App Router) + Tailwind dark theme + HLS.js + Supabase. Lihat `web/README.md`.
