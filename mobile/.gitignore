@@ -12,7 +12,6 @@ coverage/
 .vscode/
 .flutter-plugins
 .flutter-plugins-dependencies
-pubspec.lock
 .metadata
 
 # Android
