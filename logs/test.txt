@@ -1,0 +1,14 @@
+
+::group::✅ Passing tests
+✅ /home/runner/work/Projectnext/Projectnext/mobile/test/models_test.dart: Model parsing (kontrak Projectnext) SearchResponse agregat dengan errors
+✅ /home/runner/work/Projectnext/Projectnext/mobile/test/models_test.dart: Model parsing (kontrak Projectnext) AnimeInfo: episode diurutkan & tetangga
+✅ /home/runner/work/Projectnext/Projectnext/mobile/test/models_test.dart: Model parsing (kontrak Projectnext) WatchData: hls diprioritaskan, embed dikenali
+✅ /home/runner/work/Projectnext/Projectnext/mobile/test/models_test.dart: Model parsing (kontrak Projectnext) DownloadGroup toleran terhadap field hilang
+✅ /home/runner/work/Projectnext/Projectnext/mobile/test/models_test.dart: Formatter formatDuration
+✅ /home/runner/work/Projectnext/Projectnext/mobile/test/models_test.dart: Formatter parseLooseDate berbagai format
+✅ /home/runner/work/Projectnext/Projectnext/mobile/test/models_test.dart: Formatter hostOf & cleanScore
+✅ /home/runner/work/Projectnext/Projectnext/mobile/test/widget_test.dart: PrimaryButton merender label & merespons tap
+✅ /home/runner/work/Projectnext/Projectnext/mobile/test/widget_test.dart: EmptyView menampilkan judul & aksi
+::endgroup::
+
+🎉 9 tests passed.
