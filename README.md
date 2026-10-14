@@ -108,6 +108,14 @@ curl "http://localhost:3000/api/anime/samehadaku/info/one-piece"
 
 Semua respons sukses berbentuk `{ success: true, status: 200, data: ... }`, error `{ success: false, status, message }`.
 
+## Aplikasi mobile Anilab (`mobile/`)
+
+Klien **Flutter** (Android/iOS) bergaya dark + aksen merah: onboarding, beranda (hero, Top Hits, lanjutkan menonton), cari, detail + grid episode, pemutar lanskap (HLS via proxy, subtitle, auto-next), unduhan per resolusi, jadwal rilis, Daftarku, profil/pengaturan server. Lihat `mobile/README.md`.
+
+```bash
+cd mobile && ./setup.sh && flutter run   # backend: http://10.0.2.2:3000 (emulator Android)
+```
+
 ## Frontend my-anime (`web/`)
 
 Klien Next.js (App Router) + Tailwind dark theme + HLS.js + Supabase. Lihat `web/README.md`.
