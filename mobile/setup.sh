@@ -13,11 +13,13 @@ if ! command -v flutter >/dev/null 2>&1; then
   exit 1
 fi
 
-echo "▶ flutter create (hanya menambah file yang belum ada)…"
+PLATFORMS="${PLATFORMS:-android,ios}"   # mis. PLATFORMS=web ./setup.sh
+
+echo "▶ flutter create --platforms $PLATFORMS (hanya menambah file yang belum ada)…"
 flutter create . \
   --project-name anilab \
   --org com.projectnext \
-  --platforms android,ios \
+  --platforms "$PLATFORMS" \
   >/dev/null
 
 # ── Android ──────────────────────────────────────────────────────────────

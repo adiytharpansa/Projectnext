@@ -55,10 +55,18 @@ class AppConfig {
   /// sumber tidak membatasi (rate-limit) backend.
   static const homeFeedConcurrency = 3;
 
-  /// Emulator Android mengakses host lewat 10.0.2.2; simulator iOS & desktop
-  /// bisa langsung ke localhost. Perangkat fisik: isi IP LAN di Profil.
+  /// Bisa dipaksa saat build: `flutter build web --dart-define=API_BASE_URL=https://api.contoh.com`
+  static const _envApiBaseUrl = String.fromEnvironment('API_BASE_URL');
+
+  /// Default alamat backend:
+  ///  - `--dart-define=API_BASE_URL=…` bila diberikan;
+  ///  - web → origin halaman (API di-proxy dari host yang sama);
+  ///  - emulator Android → 10.0.2.2 (host); lainnya → localhost.
+  /// Perangkat fisik: isi IP LAN / URL deploy di Profil.
   static String get defaultApiBaseUrl {
-    if (!kIsWeb && Platform.isAndroid) return 'http://10.0.2.2:3000';
+    if (_envApiBaseUrl.isNotEmpty) return _envApiBaseUrl;
+    if (kIsWeb) return Uri.base.origin;
+    if (Platform.isAndroid) return 'http://10.0.2.2:3000';
     return 'http://localhost:3000';
   }
 }

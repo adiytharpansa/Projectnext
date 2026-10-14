@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -55,7 +56,7 @@ class AppTheme {
         scrolledUnderElevation: 0,
         centerTitle: true,
       ),
-      splashFactory: InkSparkle.splashFactory,
+      splashFactory: kIsWeb ? InkRipple.splashFactory : InkSparkle.splashFactory,
       dividerColor: AppColors.border,
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
