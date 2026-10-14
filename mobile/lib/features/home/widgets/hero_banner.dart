@@ -253,13 +253,13 @@ class HeroBannerSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return const SizedBox(
       height: _heroHeight,
       child: Stack(
         fit: StackFit.expand,
         children: [
-          const SkeletonBox(radius: 0),
-          const DecoratedBox(
+          SkeletonBox(radius: 0),
+          DecoratedBox(
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
@@ -268,14 +268,14 @@ class HeroBannerSkeleton extends StatelessWidget {
               ),
             ),
           ),
-          const _HeroTopBar(),
+          _HeroTopBar(),
           Positioned(
             left: 20,
             right: 20,
             bottom: 36,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 SkeletonBox(width: 240, height: 26),
                 SizedBox(height: 10),
                 SkeletonBox(width: 180, height: 14),

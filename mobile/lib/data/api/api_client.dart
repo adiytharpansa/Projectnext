@@ -116,6 +116,10 @@ class ApiClient {
         return 'Permintaan dibatalkan.';
       case DioExceptionType.badResponse:
         return 'Respons server tidak valid (HTTP ${e.response?.statusCode}).';
+      // Tipe baru di versi Dio mendatang (mis. transformTimeout) jatuh ke sini.
+      // ignore: unreachable_switch_default
+      default:
+        return 'Permintaan ke server API gagal: ${e.message ?? e.type.name}';
     }
   }
 
