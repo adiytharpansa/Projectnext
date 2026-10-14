@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Projectnext — Anime Scraper API</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { font-family: system-ui, sans-serif; background: #0d1117; color: #e6edf3; margin: 0; padding: 2rem 1rem; }
+    main { max-width: 760px; margin: 0 auto; }
+    h1 { font-size: 1.8rem; margin-bottom: 0.2rem; }
+    p.sub { color: #8b949e; margin-top: 0; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem; }
+    th, td { text-align: left; padding: 0.5rem 0.6rem; border-bottom: 1px solid #30363d; }
+    code { background: #161b22; padding: 0.15rem 0.4rem; border-radius: 6px; font-size: 0.85em; }
+    .badge { display: inline-block; background: #1f6feb; border-radius: 999px; padding: 0.15rem 0.7rem; font-size: 0.8rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <span class="badge">Projectnext v1.0.0</span>
+    <h1>Anime Scraper API</h1>
+    <p class="sub">Modular ala Consumet — Node.js + TypeScript + Express. Provider: Gogoanime &amp; Samehadaku.</p>
+    <table>
+      <tr><th>Method</th><th>Endpoint</th></tr>
+      <tr><td>GET</td><td><code>/api/health</code></td></tr>
+      <tr><td>GET</td><td><code>/api/providers</code></td></tr>
+      <tr><td>GET</td><td><code>/api/anime/:provider/search?query=</code></td></tr>
+      <tr><td>GET</td><td><code>/api/anime/:provider/info/:id</code></td></tr>
+      <tr><td>GET</td><td><code>/api/anime/:provider/watch/:episodeId</code></td></tr>
+      <tr><td>GET</td><td><code>/api/anime/:provider/download/:episodeId</code></td></tr>
+      <tr><td>GET</td><td><code>/api/proxy?url=</code></td></tr>
+      <tr><td>GET</td><td><code>/api/proxy/m3u8?url=</code></td></tr>
+    </table>
+    <p class="sub">Lihat README untuk dokumentasi penuh dan cara deploy ke Vercel/Render.</p>
+  </main>
+</body>
+</html>

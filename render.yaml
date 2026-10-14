@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: projectnext
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: GOGO_BASE_URL
+        value: https://gogoanime3.net
+      - key: GOGO_AJAX_URL
+        value: https://ajax.gogo-load.com
+      - key: SAMEHADAKU_BASE_URL
+        value: https://samehadaku.email
