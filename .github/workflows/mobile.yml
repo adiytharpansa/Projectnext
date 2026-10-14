@@ -5,10 +5,6 @@ on:
     paths:
       - "mobile/**"
       - ".github/workflows/mobile.yml"
-  pull_request:
-    paths:
-      - "mobile/**"
-      - ".github/workflows/mobile.yml"
   workflow_dispatch:
 
 permissions:
@@ -18,11 +14,19 @@ concurrency:
   group: mobile-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  # Hasil build + log diterbitkan ke ref tersembunyi (bukan branch/tag) agar
+  # bisa di-fetch dengan git:  git fetch origin +refs/preview/*:refs/remotes/preview/*
+  PREVIEW_REF_WEB: refs/preview/anilab-web
+  PREVIEW_REF_APK: refs/preview/anilab-apk
+
 jobs:
   web:
     name: Analyze, test & build web
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
@@ -31,35 +35,88 @@ jobs:
           channel: stable
           cache: true
 
-      - name: Flutter version
-        run: flutter --version
-
       - name: Scaffold web platform & fetch deps
         working-directory: mobile
-        run: PLATFORMS=web ./setup.sh
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/.ci-out"
+          flutter --version | tee "$GITHUB_WORKSPACE/.ci-out/flutter-version.txt"
+          PLATFORMS=web ./setup.sh
 
       - name: Analyze
+        id: analyze
+        continue-on-error: true
         working-directory: mobile
-        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+        run: |
+          set -o pipefail
+          flutter analyze --no-fatal-infos --no-fatal-warnings 2>&1 | tee "$GITHUB_WORKSPACE/.ci-out/analyze.txt"
+
+      - name: Annotate analyzer findings
+        if: always()
+        run: |
+          # "  error • pesan • lib/x.dart:12:5 • kode"  →  ::error file=lib/x.dart,line=12,col=5::pesan (kode)
+          awk -F' • ' '/^ *(error|warning|info) • /{
+            gsub(/^ +/,"",$1); split($3,loc,":"); lvl=$1; if (lvl=="info") lvl="notice";
+            printf "::%s file=mobile/%s,line=%s,col=%s::%s (%s)\n", lvl, loc[1], loc[2], loc[3], $2, $4
+          }' .ci-out/analyze.txt | head -30 || true
 
       - name: Test
+        id: test
+        continue-on-error: true
         working-directory: mobile
-        run: flutter test
+        run: |
+          set -o pipefail
+          flutter test 2>&1 | tee "$GITHUB_WORKSPACE/.ci-out/test.txt"
 
       - name: Build web
+        id: build
+        continue-on-error: true
         working-directory: mobile
-        run: flutter build web --release --no-web-resources-cdn --pwa-strategy none
+        run: |
+          set -o pipefail
+          flutter build web --release --pwa-strategy none 2>&1 | tee "$GITHUB_WORKSPACE/.ci-out/build-web.txt"
+
+      - name: Publish build + logs to hidden ref
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          out="$(mktemp -d)"
+          cp -r .ci-out "$out/logs"
+          [ -d mobile/build/web ] && cp -r mobile/build/web "$out/web" || true
+          {
+            echo "commit=$GITHUB_SHA"
+            echo "run=$GITHUB_RUN_ID"
+            echo "analyze=${{ steps.analyze.outcome }}"
+            echo "test=${{ steps.test.outcome }}"
+            echo "build=${{ steps.build.outcome }}"
+          } > "$out/STATUS"
+          cd "$out"
+          git init -q -b preview
+          git -c user.name=github-actions -c user.email=actions@github.com add -A
+          git -c user.name=github-actions -c user.email=actions@github.com commit -qm "anilab web preview ($GITHUB_SHA, run $GITHUB_RUN_ID)"
+          git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:${PREVIEW_REF_WEB}"
+          echo "✓ dipublikasikan ke ${PREVIEW_REF_WEB}"
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: steps.build.outcome == 'success'
         with:
           name: anilab-web
           path: mobile/build/web
           retention-days: 7
 
+      - name: Result
+        if: always()
+        run: |
+          echo "analyze=${{ steps.analyze.outcome }} test=${{ steps.test.outcome }} build=${{ steps.build.outcome }}"
+          [ "${{ steps.analyze.outcome }}" = success ] && [ "${{ steps.test.outcome }}" = success ] && [ "${{ steps.build.outcome }}" = success ]
+
   android:
     name: Build Android APK
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
@@ -78,11 +135,37 @@ jobs:
         run: PLATFORMS=android ./setup.sh
 
       - name: Build APK (release, debug-signed)
+        id: build
+        continue-on-error: true
         working-directory: mobile
-        run: flutter build apk --release
+        run: |
+          set -o pipefail
+          mkdir -p "$GITHUB_WORKSPACE/.ci-out"
+          flutter build apk --release 2>&1 | tee "$GITHUB_WORKSPACE/.ci-out/build-apk.txt"
+
+      - name: Publish APK + log to hidden ref
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          out="$(mktemp -d)"
+          cp -r .ci-out "$out/logs"
+          [ -f mobile/build/app/outputs/flutter-apk/app-release.apk ] && cp mobile/build/app/outputs/flutter-apk/app-release.apk "$out/anilab-release.apk" || true
+          { echo "commit=$GITHUB_SHA"; echo "run=$GITHUB_RUN_ID"; echo "build=${{ steps.build.outcome }}"; } > "$out/STATUS"
+          cd "$out"
+          git init -q -b preview
+          git -c user.name=github-actions -c user.email=actions@github.com add -A
+          git -c user.name=github-actions -c user.email=actions@github.com commit -qm "anilab apk ($GITHUB_SHA, run $GITHUB_RUN_ID)"
+          git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:${PREVIEW_REF_APK}"
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: steps.build.outcome == 'success'
         with:
           name: anilab-android-apk
           path: mobile/build/app/outputs/flutter-apk/app-release.apk
           retention-days: 7
+
+      - name: Result
+        if: always()
+        run: '[ "${{ steps.build.outcome }}" = success ]'
