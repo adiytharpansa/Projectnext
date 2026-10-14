@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "mobile/**"
+      - "!mobile/**.md"
       - ".github/workflows/mobile.yml"
   workflow_dispatch:
 
