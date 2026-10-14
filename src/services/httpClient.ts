@@ -32,6 +32,23 @@ class HttpClient {
     });
   }
 
+  /**
+   * Override adapter axios (mis. 'fetch' di Cloudflare Workers).
+   * Aman dipanggil kapan saja — berupa setelan, bukan perilaku default backend.
+   */
+  setAdapter(adapter: 'fetch' | 'http' | 'xhr'): void {
+    (this.client.defaults as unknown as { adapter: unknown }).adapter = adapter;
+  }
+
+  /**
+   * Override konstruktor fetch/Request/Response yang dipakai adapter
+   * (axios meng-capture yang asli saat modul dimuat — perlu di-inject ulang
+   * di runtime yang mem-patch global, mis. Workers).
+   */
+  setFetchEnv(env: { fetch: typeof fetch; Request: typeof Request; Response: typeof Response }): void {
+    (this.client.defaults as unknown as { env: unknown }).env = env;
+  }
+
   async getText(url: string, headers: Record<string, string> = {}): Promise<string> {
     const res = await this.client.get<string>(url, {
       headers: { 'User-Agent': randomUA(), ...headers },

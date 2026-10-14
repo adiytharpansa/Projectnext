@@ -1,20 +1,23 @@
 'use client';
 
 import Image from 'next/image';
-import { useCallback, useEffect, useState } from 'react';
+import { use, useCallback, useEffect, useState } from 'react';
 import EpisodeList from '@/components/EpisodeList';
 import { ErrorState, LoadingState } from '@/components/StateViews';
 import WatchlistButton from '@/components/WatchlistButton';
 import { ApiError, fetchAnimeInfo } from '@/lib/api';
 import type { AnimeInfo } from '@/lib/types';
 
+export const runtime = 'edge';
+
 export default function AnimeDetailPage({
   params,
 }: {
-  params: { provider: string; id: string };
+  params: Promise<{ provider: string; id: string }>;
 }) {
-  const provider = decodeURIComponent(params.provider);
-  const id = decodeURIComponent(params.id);
+  const { provider: rawProvider, id: rawId } = use(params);
+  const provider = decodeURIComponent(rawProvider);
+  const id = decodeURIComponent(rawId);
   const [info, setInfo] = useState<AnimeInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [view, setView] = useState<'grid' | 'list'>('grid');

@@ -33,3 +33,19 @@ Backend Projectnext harus jalan dulu (`npm run dev` di root repo, default `:3000
 ## Deploy (Vercel)
 
 Import folder `web/` sebagai project, set env `NEXT_PUBLIC_API_URL` ke URL backend production + kredensial Supabase. `npm run build` harus hijau.
+
+## Deploy (Cloudflare Pages) — terverifikasi lokal
+
+Butuh Next 15 (paket `next@15.5.2` di-pin karena batas peer adapter).
+
+```bash
+cd web
+npm run pages:build     # output ke .vercel/output (bukti lokal: wrangler pages dev → semua rute 200)
+```
+
+Lalu di dashboard Pages: Create project → hubungkan repo → **Framework: Next.js** →
+Build command `npx @cloudflare/next-on-pages` (atau `npm run pages:build`) →
+env `NEXT_PUBLIC_API_URL` (+ Supabase bila ada) →
+**Compatibility flag: `nodejs_compat`** (wajib — worker butuh `node:buffer`).
+
+Catatan: rute dinamis memakai `export const runtime = 'edge'` agar lolos build adapter.

@@ -1,0 +1,15 @@
+# Tunnel bernama (butuh 1x login): cloudflared tunnel login
+# Ganti TUNNEL_ID + hostname dengan milikmu, lalu:
+#   cloudflared tunnel --config tunnel/config.yml run
+tunnel: TUNNEL_ID
+credentials-file: /root/.cloudflared/TUNNEL_ID.json
+
+ingress:
+  # Frontend my-anime
+  - hostname: anime.example.com
+    service: http://localhost:3001
+  # Backend API Projectnext
+  - hostname: api.example.com
+    service: http://localhost:3000
+  # Fallback wajib (404 untuk host tak dikenal)
+  - service: http_status:404

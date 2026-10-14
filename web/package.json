@@ -2,21 +2,24 @@
   "name": "my-anime",
   "version": "1.0.0",
   "private": true,
-  "description": "my-anime — klien Next.js (App Router) untuk Projectnext API + Supabase",
+  "description": "my-anime \u2014 klien Next.js (App Router) untuk Projectnext API + Supabase",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "pages:build": "next-on-pages",
+    "pages:preview": "wrangler pages dev .vercel/output/static --compatibility-date=2024-10-01"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",
     "hls.js": "^1.5.14",
-    "next": "^14.2.18",
+    "next": "15.5.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@cloudflare/next-on-pages": "^1.13.16",
     "@types/node": "^22.7.4",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",

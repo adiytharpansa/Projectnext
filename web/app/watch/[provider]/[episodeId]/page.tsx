@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useCallback, useEffect, useState } from 'react';
+import { use, useCallback, useEffect, useState } from 'react';
 import DownloadSection from '@/components/DownloadSection';
 import DebridPanel from '@/components/DebridPanel';
 import EpisodeList from '@/components/EpisodeList';
@@ -11,13 +11,16 @@ import { ApiError, fetchAnimeInfo, fetchDownloadGroups, fetchWatchData } from '@
 import type { AnimeInfo, DownloadGroup, WatchData } from '@/lib/types';
 import { saveHistory } from '@/lib/watchlist';
 
+export const runtime = 'edge';
+
 export default function WatchPage({
   params,
 }: {
-  params: { provider: string; episodeId: string };
+  params: Promise<{ provider: string; episodeId: string }>;
 }) {
-  const provider = decodeURIComponent(params.provider);
-  const episodeId = decodeURIComponent(params.episodeId);
+  const { provider: rawProvider, episodeId: rawEpisodeId } = use(params);
+  const provider = decodeURIComponent(rawProvider);
+  const episodeId = decodeURIComponent(rawEpisodeId);
   const [watch, setWatch] = useState<WatchData | null>(null);
   const [downloads, setDownloads] = useState<DownloadGroup[] | null>(null);
   const [info, setInfo] = useState<AnimeInfo | null>(null);

@@ -1,0 +1,24 @@
+# Projectnext API — Cloudflare Workers
+# Deploy: cd workers && npx wrangler login && npm run deploy
+# Secret (jangan taruh di sini): npx wrangler secret put TORBOX_API_KEY
+
+name = "projectnext-api"
+main = "src/index.ts"
+compatibility_date = "2024-10-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+# Mirror default (override per-env via dashboard bila perlu)
+GOGO_BASE_URLS = "https://gogoanime3.net"
+GOGO_AJAX_URL = "https://ajax.gogo-load.com"
+SAMEHADAKU_BASE_URLS = "https://v2.samehadaku.how,https://samehadaku.how"
+NYAA_BASE_URL = "https://nyaa.si"
+GOGOBY_BASE_URL = "https://gogoanime.by"
+KITSU_BASE_URL = "https://kitsu.io/api/edge"
+TORRENTIO_BASE_URL = "https://torrentio.strem.fun"
+CACHE_TTL_SECONDS = "300"
+RATE_LIMIT_MAX = "120"
+
+# Batas paket gratis Workers — scraper berat + proxy video lebih cocok di VPS/Render.
+# Bila sering 502 dari situs sumber ber-anti-bot, jalankan backend Express di Render
+# dan pakai Worker ini hanya sebagai gerbang ringan, atau pindahkan semua ke Render.

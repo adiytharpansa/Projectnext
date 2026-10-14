@@ -128,6 +128,9 @@ Halaman: `/` (hero + Lanjutkan menonton + Favorit), `/search`, `/anime/[provider
 
 - **Vercel** — `vercel.json` sudah mengarah ke `api/index.ts` (serverless). Set env `GOGO_BASE_URL`, `GOGO_AJAX_URL`, `SAMEHADAKU_BASE_URL` di dashboard.
 - **Render** — `render.yaml` (build `npm install && npm run build`, start `npm start`). Atau manual: New Web Service → repo ini → build/start sama.
+- **Cloudflare Workers** — folder `workers/` (Hono, reuse semua provider). Lihat `workers/DEPLOY.md`. Terverifikasi via `wrangler dev`: scrape torrentio/nyaa + rantai HLS gogoby + rewrite proxy m3u8 jalan. Batasan: IP egress Workers sering diblokir anti-bot situs HTML — endpoint paling stabil: torrentio/nyaa/crunchyroll/iqiyi/debrid/proxy.
+- **Cloudflare Pages** — folder `web/` via `npm run pages:build` (butuh flag `nodejs_compat`). Terverifikasi lokal: `/`, `/search`, `/anime`, `/watch` 200 di workerd.
+- **Cloudflare Tunnel** — `tunnel/config.yml` (named, butuh domain) atau `tunnel/quick.sh [PORT]` (URL publik instan tanpa login). Terverifikasi: URL trycloudflare → 200.
 
 ## Env
 
